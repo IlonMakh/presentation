@@ -8,7 +8,7 @@
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/solarized.css">
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -16,8 +16,329 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<img src="images/WebGL_Logo.png" alt="WebGL_Logo">
+				</section>
+
+				<section>
+					<section>
+						<h2>WebGL draws</h2>
+					<ul>
+						<li>Points</li>
+						<li>Lines</li>
+						<li>Triangles</li>
+					</ul>
+					</section>
+
+					<section>
+						<img src="images/polygon.png" alt="rabbit">
+					</section>
+
+					<section>
+						<h2>WebGL coordinate system</h2>
+						<img src="images/coordinates.png" alt="coordinates">
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Vertex Shader + Fragment Shader <br> = <br> Program</h2>
+					</section>
+					<section>
+						<img width='800px' src="images/shaders.png" alt="shaders">
+					</section>
+					<section>
+						<h2>There are 4 ways a shader can receive data</h2>
+						<h3  class="fragment">1.Attributes and Buffers</h3>
+						<h3 class="fragment">2.Uniforms</h3>
+						<h3  class="fragment">3.Textures</h3>
+						<h3  class="fragment">4.Varyings</h3>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>WebGL 'Hello World'</h2>
+					</section>
+
+					<section>
+						<img width="800px" src="images/html.png" alt="html">
+					</section>
+
+					<section>
+						<h3>Prepare and initialize our WebGL context</h3>
+						<pre><code data-trim data-noescape>
+	
+							const canvas = document.getElementById('canvas');
+							const gl = canvas.getContext('webgl');
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Clear the buffer</h3>
+						<pre><code data-trim data-noescape>
+	
+							gl.clearColor(0.3, 0.1, 0.6, 0.8); // r g b a
+							gl.clear(gl.COLOR_BUFFER_BIT);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Create shaders</h3>
+						<pre><code data-trim data-noescape>
+	
+							const vShader = gl.createShader(gl.VERTEX_SHADER);
+							const fShader = gl.createShader(gl.FRAGMENT_SHADER);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Describing shader programs</h3>
+						<pre><code data-trim data-noescape>
+	
+						const vs = `
+							precision mediump float;
+							attribute vec2 verPosition;
+							void main() {
+								gl_Position = vec4(verPosition, 0.0, 1.0);
+							}
+						`;
+					
+						const fs = `
+							precision mediump float;
+							void main() {
+								gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+							}
+						`;
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Indicate that we use shaders as resources to the context</h3>
+						<pre><code data-trim data-noescape>
+	
+							gl.shaderSource(vShader, vs);
+							gl.shaderSource(fShader, fs);
+		
+							</code></pre>
+					</section>
+
+					<section>
+						<h3>Compile shaders programs</h3>
+						<pre><code data-trim data-noescape>
+	
+							gl.compileShader(vShader);
+							gl.compileShader(fShader);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Create program-object and add shaders to it</h3>
+						<pre><code data-trim data-noescape>
+							
+							const program = gl.createProgram();
+							gl.attachShader(program, vShader);
+							gl.attachShader(program, fShader);
+							gl.linkProgram(program);
+							gl.validateProgram(program);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Create an array of coordinates and a buffer</h3>
+						<pre><code data-trim data-noescape>
+
+							const vArr = new Float32Array([0.0, 0.5, -0.6, -0.5, 0.6, -0.5]);
+							const vBuffer = gl.createBuffer();
+							gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+							gl.bufferData(gl.ARRAY_BUFFER, vArr, gl.STATIC_DRAW);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Defining positions for a variable</h3>
+						<pre><code data-trim data-noescape>
+
+							const position = gl.getAttribLocation(program, 'verPosition');
+							gl.vertexAttribPointer(position, 2, gl.FLOAT, gl.FALSE, Float32Array.BYTES_PER_ELEMENT * 2, 0);
+							gl.enableVertexAttribArray(position);
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Draw triangle</h3>
+						<pre><code data-trim data-noescape>
+
+							gl.useProgram(program);
+							gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="images/triangle.png" alt="triangle">
+					</section>
+				</section>
+
+				<section data-background-iframe="https://pixijs.io/examples/#/demos-basic/tinting.js" data-background-interactive>
+				</section>
+				<section data-background-iframe="https://phaser.io/examples" data-background-interactive>
+				</section>
+
+				<section>
+					<section data-background-iframe="https://threejs.org/examples/#webgl_materials_bumpmap" data-background-interactive>
+					</section>
+
+					<section>
+						<img src="images/html2.png" alt="html">
+					</section>
+
+					<section>
+						<h3>ThreeJS scene</h3>
+						<pre><code data-trim data-noescape>
+
+							const scene = new THREE.Scene();
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Frequently used scene functions</h2>
+						<h3  class="fragment">Scene.add()</h3>
+						<h3 class="fragment">Scene.remove() </h3>
+						<h3  class="fragment">Scene.children()</h3>
+						<h3  class="fragment">Scene.getChildByName()</h3>
+					</section>
+
+					<section>
+						<h2><span class="fragment">Geometry +</span><span class="fragment"> Material =</span> Mesh</h2>
+					</section>
+
+					<section>
+						<ul>
+							<li>BoxGeometry</li>
+							<li>CircleGeometry</li>
+							<li>ConeGeometry</li>
+							<li>CylinderGeometry</li>
+							<li>DodecahedronGeometry</li>
+							<li>ExtrudeGeometry</li>
+							<li>IcosahedronGeometry</li>
+							<li>ParametricGeometry</li>
+							<li>...</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Materials</h3>
+						<img src="images/materials.jpg" alt="materials">
+					</section>
+					
+					<section>
+						<h3>Add mesh to the scene</h3>
+						<pre><code data-trim data-noescape>
+
+							const geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+							const material = new THREE.MeshPhongMaterial({ color: 0xca336d } );
+							const mesh = new THREE.Mesh( geometry, material );
+							scene.add( mesh );
+	
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>ThreeJS cameras</h2>
+						<h3  class="fragment">Perspective Camera</h3>
+						<h3 class="fragment">Stereo Camera</h3>
+						<h3  class="fragment">Orthographic Camera</h3>
+						<h3  class="fragment">Cube Camera</h3>
+					</section>
+
+					<section>
+						<img src="images/cameras.jpeg" alt="cameras">
+					</section>
+
+					<section>
+						<h3>Create camera</h3>
+						<pre><code data-trim data-noescape>
+							const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+							camera.position.z = 1;
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>ThreeJS Lighting</h3>
+						<img src="images/lights.jpeg" alt="lights">
+					</section>
+
+					<section>
+						<h3>Create lights</h3>
+						<pre><code data-trim data-noescape>
+							const spotLight = new THREE.SpotLight(0xeeeece);
+							spotLight.position.set(4000, 5000, 10000);
+							scene.add(spotLight);
+							
+							const ambientLight = new THREE.AmbientLight(0xffffff);
+							scene.add(ambientLight);
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Create renderer</h3>
+						<pre><code data-trim data-noescape>
+							const renderer = new THREE.WebGLRenderer();
+							renderer.setSize( window.innerWidth, window.innerHeight );
+							document.body.appendChild( renderer.domElement );
+							renderer.render( scene, camera );
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>It doesn't look like cube!</h3>
+						<img src="images/cube.png" alt="cube">
+					</section>
+
+					<section>
+						<ul>
+							<li>call renderer.render(...)</li>
+							<li>wait until it’s time to draw the next frame</li>
+							<li>rotate the cube a tiny amount</li>
+							<li>call renderer.render(...)</li>
+							<li>wait until it’s time to draw the next frame</li>
+							<li>rotate the cube a tiny amount</li>
+							<li>call renderer.render(...)</li>
+							<li>wait until it’s time to draw the next frame</li>
+							<li>rotate the cube a tiny amount</li>
+							<li>...</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Add animation loop</h3>
+						<pre><code data-trim data-noescape>
+							renderer.setAnimationLoop( animation );
+
+							function animation( time ) {
+								mesh.rotation.x = time / 2000;
+								mesh.rotation.y = time / 1000;
+								renderer.render( scene, camera );
+							}
+						</code></pre>
+					</section>
+
+					<section data-background-iframe="https://ilonmakh.github.io/threejs-cube/" data-background-interactive>
+					</section>
+
+				</section>
+
+
 			</div>
 		</div>
 
